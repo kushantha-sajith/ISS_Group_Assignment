@@ -955,15 +955,18 @@ class CI_Loader {
 		// to standard PHP echo statements.
 		if ( ! is_php('5.4') && ! ini_get('short_open_tag') && config_item('rewrite_short_tags') === TRUE)
 		{
+
+
 			/*
 			echo eval('?>'.preg_replace('/;*\s*\?>/', '; ?>', str_replace('<?=', '<?php echo ', file_get_contents($_ci_path))));
 			*/
-			include $file_contents;
-			$file_contents = file_get_contents($_ci_path);
-			$file_contents = str_replace("<?=", "echo ", $file_contents);
-			ob_start();
-			$output = ob_get_clean();
-			echo $output;
+			if (preg_match('/^[a-zA-Z0-9_.-]+$/', $_ci_path)) {
+				echo eval('?>' . preg_replace('/;*\s*\?>/', '; ?>', str_replace('<?=', '<?php echo ', file_get_contents($_ci_path))));
+			} else {
+				die('Invalid file name');
+			}
+
+
 		}
 		else
 		{

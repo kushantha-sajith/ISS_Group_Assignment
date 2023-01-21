@@ -352,6 +352,7 @@ class CI_DB_postgre_driver extends CI_DB {
 	 *
 	 * @return	string
 	 */
+
 	// public function insert_id()
 	// {
 	// 	$v = pg_version($this->conn_id);

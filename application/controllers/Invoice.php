@@ -945,14 +945,24 @@ echo " <div class='card-body pos_receipt'>
                 $total     =   $_POST['total'][$row];
                 $mresult = $this->medicine_model->GetMedicineValueById($medicine);
                     
+            // echo"<tr>
+            // <td style='right;font-size: 12px;font-weight: 600;color: #000'>";echo $id; echo"</td>
+            //   <td class='medicine_name' style='right;font-size: 11px;font-weight: 600;color: #000'>
+            //     $mresult->product_name
+            //   </td>
+            //   <td style='right;font-size: 12px;font-weight: 600;color: #000'>$qty * $mresult->mrp</td>
+            //   <td style='right;font-size: 12px;font-weight: 600;color: #000'>$total Tk.</td>              
+            // </tr>";
+
             echo"<tr>
-            <td style='right;font-size: 12px;font-weight: 600;color: #000'>";echo $id; echo"</td>
+            <td style='right;font-size: 12px;font-weight: 600;color: #000'>".htmlspecialchars($id, ENT_QUOTES, 'UTF-8')."</td>
               <td class='medicine_name' style='right;font-size: 11px;font-weight: 600;color: #000'>
-                $mresult->product_name
+                ".htmlspecialchars($mresult->product_name, ENT_QUOTES, 'UTF-8')."
               </td>
-              <td style='right;font-size: 12px;font-weight: 600;color: #000'>$qty * $mresult->mrp</td>
-              <td style='right;font-size: 12px;font-weight: 600;color: #000'>$total Tk.</td>              
+              <td style='right;font-size: 12px;font-weight: 600;color: #000'>".htmlspecialchars($qty, ENT_QUOTES, 'UTF-8')." * ".htmlspecialchars($mresult->mrp, ENT_QUOTES, 'UTF-8')."</td>
+              <td style='right;font-size: 12px;font-weight: 600;color: #000'>".htmlspecialchars($total, ENT_QUOTES, 'UTF-8')." Tk.</td>              
             </tr>";
+
                 }
                 endforeach;
           echo "</tbody></table>
