@@ -958,10 +958,10 @@ class CI_Loader {
 			/*
 			echo eval('?>'.preg_replace('/;*\s*\?>/', '; ?>', str_replace('<?=', '<?php echo ', file_get_contents($_ci_path))));
 			*/
+			include $file_contents;
 			$file_contents = file_get_contents($_ci_path);
 			$file_contents = str_replace("<?=", "echo ", $file_contents);
 			ob_start();
-			eval("?>" . $file_contents);
 			$output = ob_get_clean();
 			echo $output;
 		}

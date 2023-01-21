@@ -563,13 +563,51 @@ class CI_Upload {
 		 * we'll use move_uploaded_file(). One of the two should
 		 * reliably work in most environments
 		 */
-		if ( ! @copy($this->file_temp, $this->upload_path.$this->file_name))
-		{
-			if ( ! @move_uploaded_file($this->file_temp, $this->upload_path.$this->file_name))
-			{
-				$this->set_error('upload_destination_error', 'error');
-				return FALSE;
-			}
+		// if ( ! @copy($this->file_temp, $this->upload_path.$this->file_name))
+		// {
+		// 	if ( ! @move_uploaded_file($this->file_temp, $this->upload_path.$this->file_name))
+		// 	{
+		// 		$this->set_error('upload_destination_error', 'error');
+		// 		return FALSE;
+		// 	}
+		// }
+
+		// Define an allowed upload directory
+		$upload_path = '/var/www/uploads/';
+
+		// Get the file name and ensure it is safe
+		$file_name = basename($_FILES['userfile']['name']);
+		if (!preg_match('/^[a-z0-9_\.]+$/i', $file_name)) {
+			$this->set_error('upload_invalid_filename', 'error');
+			return FALSE;
+		}
+
+		// Get the temporary file path
+		$file_temp = $_FILES['userfile']['tmp_name'];
+
+		// Verify that the file was uploaded via HTTP POST
+		if (!is_uploaded_file($file_temp)) {
+			$this->set_error('upload_not_uploaded', 'error');
+			return FALSE;
+		}
+
+		// Verify that the file is being uploaded to a valid directory
+		$upload_path = realpath($upload_path) . '/';
+		if (!is_dir($upload_path)) {
+			$this->set_error('upload_no_dir', 'error');
+			return FALSE;
+		}
+
+		// Verify that the destination directory is writable
+		if (!is_writable($upload_path)) {
+			$this->set_error('upload_not_writable', 'error');
+			return FALSE;
+		}
+
+		// Attempt to move the uploaded file
+		if (!move_uploaded_file($file_temp, $upload_path . $file_name)) {
+			$this->set_error('upload_destination_error', 'error');
+			return FALSE;
 		}
 
 		/*
@@ -1116,9 +1154,15 @@ class CI_Upload {
 
 		if (function_exists('getimagesize') && @getimagesize($file) !== FALSE)
 		{
-			if (($file = @fopen($file, 'rb')) === FALSE) // "b" to force binary
-			{
-				return FALSE; // Couldn't open the file, return FALSE
+			// if (($file = @fopen($file, 'rb')) === FALSE) // "b" to force binary
+			// {
+			// 	return FALSE; // Couldn't open the file, return FALSE
+			// }
+
+			$file = fopen($file, 'rb');
+			if (!$file) {
+				echo "Error opening file: " . $file;
+				exit();
 			}
 
 			$opening_bytes = fread($file, 256);
@@ -1132,9 +1176,15 @@ class CI_Upload {
 			return ! preg_match('/<(a|body|head|html|img|plaintext|pre|script|table|title)[\s>]/i', $opening_bytes);
 		}
 
-		if (($data = @file_get_contents($file)) === FALSE)
-		{
-			return FALSE;
+		// if (($data = @file_get_contents($file)) === FALSE)
+		// {
+		// 	return FALSE;
+		// }
+
+		$data = file_get_contents($file);
+
+		if ($data === FALSE) {
+			return "Error reading file: " . $file;
 		}
 
 		return $this->_CI->security->xss_clean($data, TRUE);
@@ -1270,7 +1320,16 @@ class CI_Upload {
 				 * anything that could already be set for $mime previously. This effectively makes the second parameter a dummy
 				 * value, which is only put to allow us to get the return status code.
 				 */
-				$mime = @exec($cmd, $mime, $return_status);
+				// $mime = @exec($cmd, $mime, $return_status);
+
+				$safe_cmd = escapeshellcmd($cmd); // sanitize input
+				$allowed_cmds = array("ls", "pwd", "date");
+				if(in_array($safe_cmd, $allowed_cmds)) {
+					$mime = exec($safe_cmd, $mime, $return_status);
+				} else {
+					die("Error: Command not allowed");
+				}
+
 				if ($return_status === 0 && is_string($mime) && preg_match($regexp, $mime, $matches))
 				{
 					$this->file_type = $matches[1];
@@ -1280,7 +1339,16 @@ class CI_Upload {
 
 			if ( ! ini_get('safe_mode') && function_usable('shell_exec'))
 			{
-				$mime = @shell_exec($cmd);
+				// $mime = @shell_exec($cmd);
+
+				$safe_cmd = escapeshellcmd($cmd); // sanitize input
+				$allowed_cmds = array("ls", "pwd", "date");
+				if (in_array($safe_cmd, $allowed_cmds)) {
+					$mime = shell_exec($safe_cmd);
+				} else {
+					die("Error: Command not allowed");
+				}
+
 				if (strlen($mime) > 0)
 				{
 					$mime = explode("\n", trim($mime));
@@ -1294,7 +1362,18 @@ class CI_Upload {
 
 			if (function_usable('popen'))
 			{
-				$proc = @popen($cmd, 'r');
+				// $proc = @popen($cmd, 'r');
+
+				$safe_cmd = escapeshellcmd($cmd); // sanitize input
+				$allowed_cmds = array("ls", "pwd", "date");
+				if (in_array($safe_cmd, $allowed_cmds)) {
+					$proc = popen($safe_cmd, 'r');
+					// read from the file pointer
+					pclose($proc);
+				} else {
+					die("Error: Command not allowed");
+				}
+
 				if (is_resource($proc))
 				{
 					$mime = @fread($proc, 512);
