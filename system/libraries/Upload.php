@@ -1152,6 +1152,8 @@ class CI_Upload {
 		// processor power and time if it is actually a clean image, as it will be in nearly all instances _except_ an
 		// attempted XSS attack.
 
+		$file = filter_var($file, FILTER_SANITIZE_URL);
+
 		if (function_exists('getimagesize') && @getimagesize($file) !== FALSE)
 		{
 			// if (($file = @fopen($file, 'rb')) === FALSE) // "b" to force binary
