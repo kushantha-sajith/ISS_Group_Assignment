@@ -57,11 +57,13 @@ class Login extends CI_Controller {
         	} else {
         		if(isset($_COOKIE['email']))
         		{
-        			setcookie('email','');
+        			// setcookie('email','');
+					setcookie('email', $email, time() + (86400 * 30), '/', '', true, true);
         		}
         		if(isset($_COOKIE['password']))
         		{
-        			setcookie('password','');
+        			// setcookie('password','');
+					setcookie('password', $password, time() + (86400 * 30), '/', '', true, true);
         		}        		
         		redirect(base_url() . 'login', 'refresh');
         	}
