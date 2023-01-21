@@ -49,14 +49,9 @@ class Counter extends CI_Controller {
                     'counter' => $this->session->userdata('user_type'),
                     'status' => 1
                 );
-                $success = $this->login_model->Create_Login_Status($data);   
-
-        		// setcookie('email',$email,time() + (86400 * 30));
-        		// setcookie('password',$this->input->post('password'),time() + (86400 * 30));
-
-				setcookie('email', $email, time() + (86400 * 30), '/', '', true, true);
-				setcookie('password', $this->input->post('password'), time() + (86400 * 30), '/', '', true, true);
-
+                $success = $this->login_model->Create_Login_Status($data);                   
+        		setcookie('email',$email,time() + (86400 * 30));
+        		setcookie('password',$this->input->post('password'),time() + (86400 * 30));
         		redirect(base_url() . 'login', 'refresh');
         }
 		else{

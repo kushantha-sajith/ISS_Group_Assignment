@@ -188,42 +188,23 @@ if ($this->session->userdata('user_login_access') != False) {
                 $total      =   $_POST['total'][$row];
                 $expire     =   $_POST['expiredate'][$row];
                 $gname     =   $_POST['gname'][$row];
-                $medicineval    = $this->medicine_model->getMedicineBymedicineId($medicine); 
-
-                // echo "<tr>
-                //             <td><input type='hidden' class='form-control medicine' id='medicine' name='medicine[]' placeholder='Ounce' readonly value='$medicine'>
-                //             <input type='text' class='form-control' placeholder='Ounce' readonly value='$mname'>
-                //             </td>
-                //             <td><input type='text' class='form-control' name='gname[]' placeholder='Ounce' readonly value='$gname'></td>
-                //             <td><input type='text' class='form-control' name='modal[]' placeholder='Ounce' readonly value='$modal'></td>
-                //             <td><input type='text' class='form-control datepicker' name='expiredate[]' value='$expire' id='datepicker' required>
-                //             <input type='hidden' class='form-control' name='stock[]' placeholder='0.00' readonly value='$instock' >
-                //             </td>                            
-                //             <td><input type='text' class='form-control qtyval' name='qty[]' placeholder='0.00' value='$qty' autocomplete='off' required></td>                                                          
-                //             <td><input type='text' class='form-control tardepriceval' name='tradeprice[]' placeholder='0.00' value='$tradeprice'></td>
-                //             <td><input type='text' class='form-control mrpval' name='mrp[]' placeholder='0.00' value='$mrp'></td>
-                //             <td><input type='text' class='form-control wholesaler' name='wholesaler[]' placeholder='0.00' value='$wholesaller' required></td>
-                //             <td><input type='text' class='form-control totalval' name='totalval[]' placeholder='0.00' value='$total'></td>
-                //             <td><input type='text' class='form-control' name='barqty[]' placeholder='0.00' value='' autocomplete='off' required></td>
-                //     </tr>";
-
+                $medicineval    = $this->medicine_model->getMedicineBymedicineId($medicine);    
                 echo "<tr>
-                            <td><input type='hidden' class='form-control medicine' id='medicine' name='medicine[]' placeholder='Ounce' readonly value='".htmlentities($medicine, ENT_QUOTES, 'UTF-8')."'>
-                            <input type='text' class='form-control' placeholder='Ounce' readonly value='".htmlentities($mname, ENT_QUOTES, 'UTF-8')."'>
+                            <td><input type='hidden' class='form-control medicine' id='medicine' name='medicine[]' placeholder='Ounce' readonly value='$medicine'>
+                            <input type='text' class='form-control' placeholder='Ounce' readonly value='$mname'>
                             </td>
-                            <td><input type='text' class='form-control' name='gname[]' placeholder='Ounce' readonly value='".htmlentities($gname, ENT_QUOTES, 'UTF-8')."'></td>
-                            <td><input type='text' class='form-control' name='modal[]' placeholder='Ounce' readonly value='".htmlentities($modal, ENT_QUOTES, 'UTF-8')."'></td>
-                            <td><input type='text' class='form-control datepicker' name='expiredate[]' value='".htmlentities($expire, ENT_QUOTES, 'UTF-8')."' id='datepicker' required>
-                            <input type='hidden' class='form-control' name='stock[]' placeholder='0.00' readonly value='".htmlentities($instock, ENT_QUOTES, 'UTF-8')."' >
+                            <td><input type='text' class='form-control' name='gname[]' placeholder='Ounce' readonly value='$gname'></td>
+                            <td><input type='text' class='form-control' name='modal[]' placeholder='Ounce' readonly value='$modal'></td>
+                            <td><input type='text' class='form-control datepicker' name='expiredate[]' value='$expire' id='datepicker' required>
+                            <input type='hidden' class='form-control' name='stock[]' placeholder='0.00' readonly value='$instock' >
                             </td>                            
-                            <td><input type='text' class='form-control qtyval' name='qty[]' placeholder='0.00' value='".htmlentities($qty, ENT_QUOTES, 'UTF-8')."' autocomplete='off' required></td>                                                          
-                            <td><input type='text' class='form-control tardepriceval' name='tradeprice[]' placeholder='0.00' value='".htmlentities($tradeprice, ENT_QUOTES, 'UTF-8')."'></td>
-                            <td><input type='text' class='form-control mrpval' name='mrp[]' placeholder='0.00' value='".htmlentities($mrp, ENT_QUOTES, 'UTF-8')."'></td>
-                            <td><input type='text' class='form-control wholesaler' name='wholesaler[]' placeholder='0.00' value='".htmlentities($wholesaller, ENT_QUOTES, 'UTF-8')."' required></td>
-                            <td><input type='text' class='form-control totalval' name='totalval[]' placeholder='0.00' value='".htmlentities($total, ENT_QUOTES, 'UTF-8')."'></td>
+                            <td><input type='text' class='form-control qtyval' name='qty[]' placeholder='0.00' value='$qty' autocomplete='off' required></td>                                                          
+                            <td><input type='text' class='form-control tardepriceval' name='tradeprice[]' placeholder='0.00' value='$tradeprice'></td>
+                            <td><input type='text' class='form-control mrpval' name='mrp[]' placeholder='0.00' value='$mrp'></td>
+                            <td><input type='text' class='form-control wholesaler' name='wholesaler[]' placeholder='0.00' value='$wholesaller' required></td>
+                            <td><input type='text' class='form-control totalval' name='totalval[]' placeholder='0.00' value='$total'></td>
                             <td><input type='text' class='form-control' name='barqty[]' placeholder='0.00' value='' autocomplete='off' required></td>
                     </tr>";
-
                     }
                 } 
             echo "</tbody>
@@ -621,19 +602,11 @@ if ($this->session->userdata('user_login_access') != False) {
                                         //$medicinestock = $this->purchase_model->getMedicineStock($medicine);
                                         //$instock = $medicinestock->instock + $qty;
                                         $medicinestock = $this->purchase_model->getmedicineByMId($medicine);
-                                                
-                                                // echo "<tr>
-                                                //     <td class=''>$medicinestock->product_name</td>
-                                                //     <td>$qty</td>
-                                                //     <td class=''>$tradeprice </td>
-                                                //     <td class=''> $total </td>
-                                                // </tr>";
-
                                                 echo "<tr>
-                                                    <td class=''>".htmlspecialchars($medicinestock->product_name, ENT_QUOTES, 'UTF-8')."</td>
-                                                    <td>".htmlspecialchars($qty, ENT_QUOTES, 'UTF-8')."</td>
-                                                    <td class=''>".htmlspecialchars($tradeprice, ENT_QUOTES, 'UTF-8')." </td>
-                                                    <td class=''>".htmlspecialchars($total, ENT_QUOTES, 'UTF-8')."  </td>
+                                                    <td class=''>$medicinestock->product_name</td>
+                                                    <td>$qty</td>
+                                                    <td class=''>$tradeprice </td>
+                                                    <td class=''> $total </td>
                                                 </tr>";
                                         }
                                         }

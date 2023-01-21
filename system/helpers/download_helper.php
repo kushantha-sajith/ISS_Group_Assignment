@@ -149,8 +149,7 @@ if ( ! function_exists('force_download'))
 		// Flush 1MB chunks of data
 		while ( ! feof($fp) && ($data = fread($fp, 1048576)) !== FALSE)
 		{
-			// echo $data;
-			echo htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+			echo $data;
 		}
 
 		fclose($fp);
