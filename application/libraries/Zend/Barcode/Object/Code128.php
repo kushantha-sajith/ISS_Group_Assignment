@@ -268,8 +268,14 @@ class Zend_Barcode_Object_Code128 extends Zend_Barcode_Object_ObjectAbstract
             return array();
         }
 
-        if (isset($this->_convertedText[md5($string)])) {
-            return $this->_convertedText[md5($string)];
+        $string_hash = password_hash($string, PASSWORD_DEFAULT);
+
+        // if (isset($this->_convertedText[md5($string)])) {
+        //     return $this->_convertedText[md5($string)];
+        // }
+        
+        if (isset($this->_convertedText[$string_hash])) {
+            return $this->_convertedText[$string_hash];
         }
 
         $currentCharset = null;
