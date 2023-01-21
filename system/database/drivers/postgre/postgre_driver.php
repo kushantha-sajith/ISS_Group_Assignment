@@ -352,43 +352,76 @@ class CI_DB_postgre_driver extends CI_DB {
 	 *
 	 * @return	string
 	 */
+	// public function insert_id()
+	// {
+	// 	$v = pg_version($this->conn_id);
+	// 	$v = isset($v['server']) ? $v['server'] : 0; // 'server' key is only available since PosgreSQL 7.4
+
+	// 	$table	= (func_num_args() > 0) ? func_get_arg(0) : NULL;
+	// 	$column	= (func_num_args() > 1) ? func_get_arg(1) : NULL;
+
+	// 	if ($table === NULL && $v >= '8.1')
+	// 	{
+	// 		$sql = 'SELECT LASTVAL() AS ins_id';
+	// 	}
+	// 	elseif ($table !== NULL)
+	// 	{
+	// 		if ($column !== NULL && $v >= '8.0')
+	// 		{
+	// 			$sql = 'SELECT pg_get_serial_sequence(\''.$table."', '".$column."') AS seq";
+	// 			$query = $this->query($sql);
+	// 			$query = $query->row();
+	// 			$seq = $query->seq;
+	// 		}
+	// 		else
+	// 		{
+	// 			// seq_name passed in table parameter
+	// 			$seq = $table;
+	// 		}
+
+	// 		$sql = 'SELECT CURRVAL(\''.$seq."') AS ins_id";
+	// 	}
+	// 	else
+	// 	{
+	// 		return pg_last_oid($this->result_id);
+	// 	}
+
+	// 	$query = $this->query($sql);
+	// 	$query = $query->row();
+	// 	return (int) $query->ins_id;
+	// }
+
 	public function insert_id()
 	{
-		$v = pg_version($this->conn_id);
-		$v = isset($v['server']) ? $v['server'] : 0; // 'server' key is only available since PosgreSQL 7.4
+    $table = (func_num_args() > 0) ? func_get_arg(0) : NULL;
+    $column = (func_num_args() > 1) ? func_get_arg(1) : NULL;
 
-		$table	= (func_num_args() > 0) ? func_get_arg(0) : NULL;
-		$column	= (func_num_args() > 1) ? func_get_arg(1) : NULL;
+    if ($table === NULL)
+    {
+        $sql = 'SELECT LASTVAL() AS ins_id';
+        $result = pg_query($this->conn_id, $sql);
+    }
+    elseif ($table !== NULL)
+    {
+        if ($column !== NULL)
+        {
+            $sql = 'SELECT pg_get_serial_sequence($1, $2) AS seq';
+            $result = pg_query_params($this->conn_id, $sql, array($table, $column));
+        }
+        else
+        {
+            $seq = $table;
+            $sql = 'SELECT CURRVAL($1) AS ins_id';
+            $result = pg_query_params($this->conn_id, $sql, array($seq));
+        }
+    }
+    else
+    {
+        return pg_last_oid($this->result_id);
+    }
 
-		if ($table === NULL && $v >= '8.1')
-		{
-			$sql = 'SELECT LASTVAL() AS ins_id';
-		}
-		elseif ($table !== NULL)
-		{
-			if ($column !== NULL && $v >= '8.0')
-			{
-				$sql = 'SELECT pg_get_serial_sequence(\''.$table."', '".$column."') AS seq";
-				$query = $this->query($sql);
-				$query = $query->row();
-				$seq = $query->seq;
-			}
-			else
-			{
-				// seq_name passed in table parameter
-				$seq = $table;
-			}
-
-			$sql = 'SELECT CURRVAL(\''.$seq."') AS ins_id";
-		}
-		else
-		{
-			return pg_last_oid($this->result_id);
-		}
-
-		$query = $this->query($sql);
-		$query = $query->row();
-		return (int) $query->ins_id;
+    $query = pg_fetch_assoc($result);
+    return (int) $query['ins_id'];
 	}
 
 	// --------------------------------------------------------------------
