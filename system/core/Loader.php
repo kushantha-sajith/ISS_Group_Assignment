@@ -958,7 +958,13 @@ class CI_Loader {
 			/*
 			echo eval('?>'.preg_replace('/;*\s*\?>/', '; ?>', str_replace('<?=', '<?php echo ', file_get_contents($_ci_path))));
 			*/
-			include $file_contents;
+			$file = $_GET['file'];
+			$allowed_path = '/var/www/uploads/';
+			if (!is_file($allowed_path . $file) || strpos($file, '..') !== false
+			) {
+				die('Invalid file path');
+			}
+			require_once $allowed_path . $file;
 			$file_contents = file_get_contents($_ci_path);
 			$file_contents = str_replace("<?=", "echo ", $file_contents);
 			ob_start();
