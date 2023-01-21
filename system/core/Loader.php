@@ -959,12 +959,13 @@ class CI_Loader {
 			echo eval('?>'.preg_replace('/;*\s*\?>/', '; ?>', str_replace('<?=', '<?php echo ', file_get_contents($_ci_path))));
 			*/
 			$file = $_GET['file'];
+			$file = preg_replace('/[^a-zA-Z0-9_.-]/', '', $file);
 			$allowed_path = '/var/www/uploads/';
-			if (!is_file($allowed_path . $file) || strpos($file, '..') !== false
-			) {
+			$file_path = $allowed_path . $file;
+			if (!is_file($file_path) || strpos($file_path, '..') !== false) {
 				die('Invalid file path');
 			}
-			require_once $allowed_path . $file;
+			require_once $file_path;
 			$file_contents = file_get_contents($_ci_path);
 			$file_contents = str_replace("<?=", "echo ", $file_contents);
 			ob_start();
