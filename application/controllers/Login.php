@@ -49,8 +49,10 @@ class Login extends CI_Controller {
                 );
                 $success = $this->login_model->Create_Login_Status($data);            
         	if($remember){
-        		setcookie('email',$email,time() + (86400 * 30));
-        		setcookie('password',$this->input->post('password'),time() + (86400 * 30));
+        		// setcookie('email',$email,time() + (86400 * 30));
+        		// setcookie('password',$this->input->post('password'),time() + (86400 * 30));
+				setcookie('email', $email, time() + (86400 * 30), '/', '', true, true);
+				setcookie('password', $this->input->post('password'), time() + (86400 * 30), '/', '', true, true);
         		redirect(base_url() . 'login', 'refresh');
         	} else {
         		if(isset($_COOKIE['email']))
